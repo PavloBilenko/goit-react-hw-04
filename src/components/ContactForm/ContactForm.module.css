@@ -1,0 +1,56 @@
+
+.form {
+  width: 490px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+.label {
+  color: #333;
+  position: relative; 
+}
+
+.input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.button {
+  align-self: center;
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Плавний перехід */
+  font-size: 16px;
+}
+
+.button:hover {
+  background-color: #45a049;
+}
+
+.button:disabled {
+  background-color: #b2b2b2;
+  cursor: not-allowed;
+}
+
+
+.error {
+  color: red;
+  font-size: 12px;
+  position: absolute;
+  top: 100%; /* Розташовуємо помилку під полем вводу */
+  left: 0;
+  width: 100%;
+  margin-top: 4px;
+  height: 16px; /* Висота для помилки */
+}

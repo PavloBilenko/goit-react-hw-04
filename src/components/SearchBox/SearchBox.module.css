@@ -1,0 +1,17 @@
+.searchBoxContainer {
+  width: 490px; /* Ширина пошукового блоку у 2 рази менша */
+  margin-bottom: 30px;
+}
+
+.title {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
