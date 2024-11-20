@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./SearchBar.module.css";
+import s from "./SearchBar.module.css";
 
 const SearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState("");
@@ -15,16 +15,16 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <header className="SearchBar">
-      <form className="SearchForm" onSubmit={handleSubmit}>
+    <header className={s.SearchBar}>
+      <form className={s.SearchForm} onSubmit={handleSubmit}>
         <input
           type="text"
-          className="SearchInput"
+          className={s.SearchInput}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search images and photos"
         />
-        <button type="submit" className="SearchButton">
+        <button type="submit" className={s.SearchButton}>
           Search
         </button>
       </form>
