@@ -5,7 +5,7 @@ import Loader from "./components/Loader/Loader";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
 import ImageModal from "./components/ImageModal/ImageModal";
 import { fetchImages } from "./services/api";
-import "./app.css";
+import "./App.css";
 
 const App = () => {
   const [images, setImages] = useState([]);
