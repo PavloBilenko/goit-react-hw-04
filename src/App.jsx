@@ -1,80 +1,78 @@
-import { useState, useEffect } from "react";
-import "./App.css";
-import "modern-normalize";
-import ContactForm from "./components/ContactForm/ContactForm";
-import ContactList from "./components/ContactList/ContactList";
-import SearchBox from "./components/SearchBox/SearchBox";
-import { nanoid } from "nanoid";
+import React, { useState, useEffect } from "react";
+import SearchBar from "./components/SearchBar/SearchBar";
+import ImageGallery from "./components/ImageGallery/ImageGallery";
+import Loader from "./components/Loader/Loader";
+import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
+import ImageModal from "./components/ImageModal/ImageModal";
+import { fetchImages } from "./services/api";
+import "./app.css";
 
-function App() {
-  // Load contacts from local storage on initial render
-  const [contacts, setContacts] = useState(() => {
-    const savedContacts = localStorage.getItem("contacts");
-    return savedContacts
-      ? JSON.parse(savedContacts)
-      : [
-          { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
-          { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
-          { id: "id-3", name: "Eden Clements", number: "645-17-79" },
-          { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
-        ];
-  });
+const App = () => {
+  const [images, setImages] = useState([]);
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  // Load search query from local storage on initial render
-  const [searchQuery, setSearchQuery] = useState(() => {
-    return localStorage.getItem("searchQuery") || "";
-  });
-
-  // Update local storage whenever contacts change
   useEffect(() => {
-    localStorage.setItem("contacts", JSON.stringify(contacts));
-  }, [contacts]);
+    if (!query) return;
 
-  // Update local storage whenever search query changes
-  useEffect(() => {
-    localStorage.setItem("searchQuery", searchQuery);
-  }, [searchQuery]);
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
 
-  // Filter contacts based on search query
-  const filteredContacts = contacts.filter(
-    (contact) =>
-      typeof contact.name === "string" &&
-      contact.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Handle search query changes
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  // Add a new contact to the list
-  const handleAddContact = (name, number) => {
-    const newContact = {
-      id: nanoid(),
-      name,
-      number,
+      try {
+        const { images: newImages, totalPages } = await fetchImages(
+          query,
+          page
+        );
+        setImages((prevImages) => [...prevImages, ...newImages]);
+        setTotalPages(totalPages);
+      } catch (err) {
+        setError("Something went wrong. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
     };
-    setContacts((prevContacts) => [...prevContacts, newContact]);
+
+    fetchData();
+  }, [query, page]);
+
+  const handleSearch = (newQuery) => {
+    setQuery(newQuery);
+    setImages([]);
+    setPage(1);
+    setTotalPages(0);
   };
 
-  // Delete a contact by ID
-  const handleDeleteContact = (id) => {
-    setContacts((prevContacts) =>
-      prevContacts.filter((contact) => contact.id !== id)
-    );
+  const handleLoadMore = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
+  const handleSelectImage = (image) => {
+    setSelectedImage(image);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedImage(null);
   };
 
   return (
-    <div>
-      <h1>Phonebook</h1>
-      <ContactForm onAddContact={handleAddContact} />
-      <SearchBox
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
-      />
-      <ContactList contacts={filteredContacts} onDelete={handleDeleteContact} />
+    <div className="App">
+      <SearchBar onSearch={handleSearch} />
+      {error && <p className="error-message">{error}</p>}
+      <ImageGallery images={images} onSelectImage={handleSelectImage} />
+      {isLoading && <Loader />}
+      {page < totalPages && !isLoading && (
+        <LoadMoreBtn onLoadMore={handleLoadMore} />
+      )}
+      {selectedImage && (
+        <ImageModal image={selectedImage} onClose={handleCloseModal} />
+      )}
     </div>
   );
-}
+};
 
 export default App;
