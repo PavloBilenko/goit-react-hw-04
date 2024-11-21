@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify"; // Імпорт toast
 import s from "./SearchBar.module.css";
 
 const SearchBar = ({ onSearch }) => {
@@ -7,7 +8,7 @@ const SearchBar = ({ onSearch }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (query.trim() === "") {
-      alert("Please enter a search term.");
+      toast.warn("Please enter a search term."); // Використання toast для попередження
       return;
     }
     onSearch(query);

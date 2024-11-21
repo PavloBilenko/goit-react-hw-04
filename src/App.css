@@ -1,3 +1,5 @@
+@import 'react-toastify/dist/ReactToastify.css';
+
 .App {
   font-family: Arial, sans-serif;
   text-align: center; /* Центрування всього контенту */

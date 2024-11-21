@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import SearchBar from "./components/SearchBar/SearchBar";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
 import Loader from "./components/Loader/Loader";
@@ -13,7 +14,6 @@ const App = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
@@ -21,7 +21,6 @@ const App = () => {
 
     const fetchData = async () => {
       setIsLoading(true);
-      setError(null);
 
       try {
         const { images: newImages, totalPages } = await fetchImages(
@@ -30,8 +29,12 @@ const App = () => {
         );
         setImages((prevImages) => [...prevImages, ...newImages]);
         setTotalPages(totalPages);
+
+        if (newImages.length === 0) {
+          toast.info("No results found. Try a different search term.");
+        }
       } catch (err) {
-        setError("Something went wrong. Please try again.");
+        toast.error("Something went wrong. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -41,6 +44,11 @@ const App = () => {
   }, [query, page]);
 
   const handleSearch = (newQuery) => {
+    if (newQuery.trim() === "") {
+      toast.warn("Please enter a search term.");
+      return;
+    }
+
     setQuery(newQuery);
     setImages([]);
     setPage(1);
@@ -62,7 +70,6 @@ const App = () => {
   return (
     <div className="App">
       <SearchBar onSearch={handleSearch} />
-      {error && <p className="error-message">{error}</p>}
       <ImageGallery images={images} onSelectImage={handleSelectImage} />
       {isLoading && <Loader />}
       {page < totalPages && !isLoading && (
@@ -71,6 +78,8 @@ const App = () => {
       {selectedImage && (
         <ImageModal image={selectedImage} onClose={handleCloseModal} />
       )}
+      <ToastContainer position="top-right" autoClose={3000} />{" "}
+      {/* Контейнер для toast */}
     </div>
   );
 };
